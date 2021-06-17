@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>实验一</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../static/lib/layui-v2.5.5/css/layui.css" media="all">
+    <link rel="stylesheet" href="../static/lib/font-awesome-4.7.0/css/font-awesome.min.css" media="all">
+    <link rel="stylesheet" href="../static/css/public.css" media="all">
+    <style>
+        .layui-card {
+            border: 1px solid #f2f2f2;
+            border-radius: 5px;
+        }
+
+        .icon {
+            margin-right: 10px;
+            color: #1aa094;
+        }
+
+        .layuimini-qiuck-module a i {
+            display: inline-block;
+            width: 100%;
+            height: 60px;
+            line-height: 60px;
+            text-align: center;
+            border-radius: 2px;
+            font-size: 30px;
+            background-color: #F8F8F8;
+            color: #333;
+            transition: all .3s;
+            -webkit-transition: all .3s;
+        }
+
+        .layuimini-qiuck-module a cite {
+            position: relative;
+            top: 2px;
+            display: block;
+            color: #666;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+            font-size: 14px;
+        }
+
+        .main_btn > p {
+            height: 40px;
+        }
+    </style>
+</head>
+<body>
+<div class="layuimini-container">
+    <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
+    <div class="layuimini-main">
+        <script type="text/html" id="toolbarDemo">
+            <div class="layui-btn-container">
+                <button class="layui-btn layui-btn-normal layui-btn-sm data-add-btn" lay-event="start">开始实验</button>
+                <button class="layui-btn layui-btn-normal layui-btn-sm data-add-btn" lay-event="add"> 添加</button>
+                <button class="layui-btn layui-btn-sm layui-btn-sm data-delete-btn" lay-event="edit"> 修改</button>
+                <button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="delete"
+                        id="layerDemo"> 删除
+                </button>
+                <button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="finish"
+                        id="layerDemo1"> 结束实验
+                </button>
+            </div>
+            <div class="layuimini-notice">
+                <div class="layuimini-notice-title">使用须知，点击查看(第一次使用必读！)</div>
+                <div class="layuimini-notice-content layui-hide">
+                    <p><font size="3">
+                        实验结束后必须点击结束实验，否则实验数据将无法保存后果自负。<br>
+                        输入数据完成后，下方的图像显示需点击右上角刷新按钮，届时进行任何操作之前都需要点击开始实验，哪怕是结束实验。<br>
+                        由于浏览器安全以及兼容性问题，若要导入数据还需要手动添加路径。<br>
+                        本人尝试了许多次解决方法未果，若有解决方法也可以联系我。<br>
+                        请注意填写路径时注意单斜杆要变双斜杆，例如要导入文件在电脑上位置为 E:\我的数据\data.txt,则此处输入 E:\\我的数据\\data.txt。
+                    </font></p>
+                </div>
+            </div>
+            <form class="layui-form" action="" lay-filter="example" style="margin-left: 0px;">
+                <div class="layui-form-item">
+                    <label class="layui-form-label"></label>
+                    <div class="layui-input-block" style="margin-left: 0px;">
+                        <input type="text" name="data" id="data" placeholder="请输入要导入文本的绝对路径，注意单斜杆要变双斜杆,或者手动添加"
+                               class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block" style="margin-left: 0px;">
+                        <button class="layui-btn" lay-submit lay-filter="formStep2">确认提交</button>
+                    </div>
+                </div>
+            </form>
+        </script>
+
+        <!--  <div class="layui-form-item">
+              <div class="layui-inline">
+                  <label class="layui-form-label"></label>
+                  <div class="layui-input-inline">
+                      <input type="tel" name="phone" lay-verify="required|phone" autocomplete="off" placeholder="请输入频率"class="layui-input">
+                  </div>
+              </div>
+              <div class="layui-inline">
+                  <label class="layui-form-label"></label>
+                  <div class="layui-input-inline">
+                      <input type="text" name="email" lay-verify="email" autocomplete="off"placeholder="请输入电导" class="layui-input">
+                  </div>
+              </div>
+              <div class="layui-inline">
+                  <label class="layui-form-label"></label>
+                  <div class="layui-input-inline">
+                      <input type="text" name="email" lay-verify="email" autocomplete="off" placeholder="请输入电纳" class="layui-input">
+                  </div>
+              </div>
+          </div>-->
+
+        <script type="text/html" id="currentTableBar">
+            <a class="layui-btn layui-btn-normal layui-btn-xs data-count-edit" lay-event="edit">编辑</a>
+            <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete">删除</a>
+        </script>
+
+        <div class="layui-row layui-col-space15">
+            <div class="layui-row layui-col-space15">
+                <div class="layui-col-md12">
+                    <div class="layui-card">
+                        <div class="layui-card-header"><i class="fa fa-line-chart icon"></i>图像</div>
+                        <div class="layui-card-body">
+                            <div id="echarts-records" style="width: 100%;min-height:500px"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="../static/lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
+<script src="../static/js/lay-config.js?v=1.0.4" charset="utf-8"></script>
+<script>
+    layui.use(['form', 'table', 'miniTab', 'echarts'], function () {
+        var $ = layui.jquery,
+            form = layui.form,
+            table = layui.table;
+        /*  加载表格实例*/
+        table.render({
+            elem: '#currentTableId',
+            url: 'http://localhost:8002/TemporaryTest/query',
+            toolbar: '#toolbarDemo',
+            method: "post",
+            defaultToolbar: ['filter', 'exports', 'print'],
+            cols: [
+                [
+                    {type: "checkbox", width: 50},
+                    {field: 'id', width: 80, title: 'ID', sort: true},
+                    {field: 'f', width: 180, title: '频率'},
+                    {field: 'g', width: 180, title: '电导'},
+                    {field: 'b', width: 180, title: '电纳'},
+                    {field: 'remark', title: '布放条件', minWidth: 250},
+                    {field: 'date', width: 180, title: '时间'}
+                ]
+            ],
+            limits: [10, 15, 20, 25, 50, 100],
+            limit: 15,
+            skin: 'line'
+        });
+
+        // 监听搜索操作
+        form.on('submit(data-search-btn)', function (data) {
+            //执行搜索重载
+            table.reload('currentTableId', {
+                page: {
+                    curr: 1
+                }
+                , where: {
+                    //
+                    "f": data.field.f,
+                    "g": data.field.b,
+                    "b": data.field.g
+                }
+            }, 'data');
+
+            return false;
+        });
+        /**
+         * toolbar监听事件
+         */
+        var starttest;
+        table.on('toolbar(currentTableFilter)', function (obj) {
+            if (obj.event === 'start') {
+                starttest = 99;
+                layer.msg("欢迎使用，请确认已熟知使用须知");
+            }
+            else if (obj.event === 'add') {
+                if (starttest != 99) {
+                    layer.msg("请点击开始实验");
+                    return;
+                }
+                // 监听添加操作
+                var index = layer.open({
+                    title: '添加数据',
+                    type: 2,
+                    shade: 0.2,
+                    maxmin: true,
+                    shadeClose: true,
+                    area: ['100%', '100%'],
+                    content: '../Temporary/create',
+                    end: function () {
+                        table.reload('currentTableId');
+                    }
+                });
+                $(window).on("resize", function () {
+
+                    layer.full(index);
+                });
+            } else if (obj.event === 'finish') {  // 监听删除操作
+                if (starttest != 99) {
+                    layer.msg("请点击开始实验");
+                    return;
+                }
+                starttest = 0;
+                $.ajax({
+                    url: "http://localhost:8002/TemporaryTest/finish",
+                    type: "POST",
+                    dataType: 'json',
+                    success: function (data) {
+                        layer.msg(data.msg, {time: 1000},
+                            function () {
+                                table.reload('currentTableId');
+                            });
+                    }
+                });
+            }
+
+            else if (obj.event === 'delete') {  // 监听删除操作
+                var checkStatus = table.checkStatus('currentTableId'),
+                    data = checkStatus.data;
+                var arr = [];
+                for (index in data) {
+                    arr.push(data[index].id);
+                }
+                if (arr.length == 0) {
+                    layer.msg("请最少选择一条数据");
+                    return;
+                }
+                layer.confirm("确定删除数据吗", {
+                    btn: ['确定', '取消']
+                }, function () {
+                    $.ajax({
+                        url: "http://localhost:8002/TemporaryTest/delete",
+                        type: "POST",
+                        dataType: 'json',
+                        data: 'ids=' + arr.join(","),
+                        success: function (data) {
+                            layer.msg(data.msg, {time: 500},
+                                function () {
+                                    table.reload('currentTableId');
+                                });
+                        }
+                    });
+                }, function () {
+                    layer.close(index);
+                });
+            }
+
+            else if (obj.event === 'edit') {  // 监听修改操作
+                var checkStatus = table.checkStatus('currentTableId')
+                    , data = checkStatus.data;
+                var arr = [];
+                for (index in data) {
+                    arr.push(data[index].id);
+                }
+                if (arr.length != 1) {
+                    layer.msg("请选择一行数据");
+                    return;
+                }
+
+                var index = layer.open({
+                    title: '修改数据',
+                    type: 2,
+                    shade: 0.2,
+                    maxmin: true,
+                    shadeClose: true,
+                    area: ['100%', '100%'],
+                    content: '../Temporary/update?id=' + arr[0],
+                    end: function () {
+                        table.reload('currentTableId');
+                    }
+                });
+                $(window).on("resize", function () {
+                    layer.full(index);
+                });
+            }
+        });
+    });
+    layui.use(['form', 'layer', 'miniTab', 'echarts'], function () {
+        var $ = layui.jquery,
+            layer = layui.layer,
+            form = layui.form,
+            miniTab = layui.miniTab,
+            echarts = layui.echarts;
+
+        form.on('submit(formStep2)', function (data) {
+            $.ajax({
+                url: "http://localhost:8002/TemporaryTest/data",
+                type: "POST",
+                contentType: 'application/json',
+                dataType: 'json',
+                data: data.field.data,
+                success: function (data) {
+                    layer.msg(data.msg);
+                }
+            });
+            return false;
+        });
+        /**
+         * 查看公告信息
+         **/
+
+        $('body').on('click', '.layuimini-notice', function () {
+            var title = $(this).children('.layuimini-notice-title').text(),
+                noticeTime = $(this).children('.layuimini-notice-extra').text(),
+                content = $(this).children('.layuimini-notice-content').html();
+            var html = '<div style="padding:15px 20px; text-align:justify; line-height: 22px;border-bottom:1px solid #e2e2e2;background-color: #2f4056;color: #ffffff">\n' +
+                '<div style="text-align: center;margin-bottom: 20px;font-weight: bold;border-bottom:1px solid #718fb5;padding-bottom: 5px"><h4 class="text-danger">' + title + '</h4></div>\n' +
+                '<div style="font-size: 12px">' + content + '</div>\n' +
+                '</div>\n';
+            parent.layer.open({
+                type: 1,
+                title: '须知' + '<span style="float: right;right: 1px;font-size: 12px;color: #b1b3b9;margin-top: 1px">' + noticeTime + '</span>',
+                area: '300px;',
+                shade: 0.8,
+                id: 'layuimini-notice',
+                btn: ['确定', '取消'],
+                btnAlign: 'c',
+                moveType: 1,
+                content: html,
+                success: function (layero) {
+                    /*   var btn = layero.find('.layui-layer-btn');
+                       btn.find('.layui-layer-btn0').attr({
+                           href: 'https://gitee.com/zhongshaofa/layuimini',
+                           target: '_blank'
+                       });*/
+                }
+            });
+        });
+        /**
+         * 报表功能
+         */
+        var fre = [];
+        var conduct = [];
+        var susceptance = [];
+        $.ajax({
+            url: "http://localhost:8002/TemporaryTest/details",
+            type: "POST",
+            dataType: 'json',
+            data: "1",
+            success: function (data) {
+                for (var i = 0; i < data.data.length; i++) {
+                    fre.push(data.data[i].f);    //挨个取出类别并填入类别数组
+                }
+                for (var g = 0; g < data.data.length; g++) {
+                    conduct.push(data.data[g].g);    //挨个取出类别并填入类别数组
+                }
+                for (var b = 0; b < data.data.length; b++) {
+                    susceptance.push(data.data[b].b);    //挨个取出类别并填入类别数组
+                }
+                var echartsRecords = echarts.init(document.getElementById('echarts-records'), 'walden');
+                var optionRecords = {
+                    tooltip: {
+                        trigger: 'axis'
+                    },
+                    legend: {
+                        data: ['电导', '电纳']
+                    },
+                    grid: {
+                        left: '3%',
+                        right: '4%',
+                        bottom: '3%',
+                        containLabel: true
+                    },
+                    toolbox: {
+                        feature: {
+                            saveAsImage: {}
+                        }
+                    },
+                    xAxis: {
+                        type: 'category',
+                        boundaryGap: false,
+                        data: fre
+                    },
+                    yAxis: {
+                        type: 'value'
+                    },
+                    series: [
+                        {
+                            name: '电导',
+                            type: 'line',
+                            data: conduct
+                        },
+                        {
+                            name: '电纳',
+                            type: 'line',
+                            data: susceptance
+                        }
+                    ]
+                };
+                echartsRecords.setOption(optionRecords);
+                // echarts 窗口缩放自适应
+                window.onresize = function () {
+                    echartsRecords.resize();
+                };
+            }
+        });
+    });
+
+</script>
+</body>
+</html>

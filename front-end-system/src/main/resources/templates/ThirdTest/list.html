@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>layui</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <link rel="stylesheet" href="../static/lib/layui-v2.5.5/css/layui.css" media="all">
+    <link rel="stylesheet" href="../static/css/public.css" media="all">
+    <script type="text/javascript"
+            src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=AM_HTMLorMML-full"></script>
+</head>
+<body>
+<div class="layuimini-container">
+    <div class="layuimini-main">
+
+        <fieldset class="table-search-fieldset">
+            <legend>查询条件</legend>
+            <div style="margin: 10px 10px 10px 10px">
+                <form class="layui-form layui-form-pane" action="">
+                    <div class="layui-form-item">
+                        <div class="layui-inline">
+                            <label class="layui-form-label">`f`</label>
+                            <div class="layui-input-inline">
+                                <input type="number" name="f" autocomplete="off" class="layui-input">
+                            </div>
+                        </div>
+
+                        <div class="layui-inline">
+                            <button type="submit" class="layui-btn layui-btn-primary" lay-submit
+                                    lay-filter="data-search-btn"><i class="layui-icon"></i> 搜 索
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </fieldset>
+
+        <script type="text/html" id="toolbarDemo">
+            <div class="layui-btn-container">
+                <button class="layui-btn layui-btn-normal layui-btn-sm data-add-btn" lay-event="add"> 添加</button>
+                <button class="layui-btn layui-btn-sm layui-btn-sm data-delete-btn" lay-event="edit"> 修改</button>
+                <button class="layui-btn layui-btn-sm layui-btn-danger data-delete-btn" lay-event="delete"
+                        id="layerDemo"> 删除
+                </button>
+            </div>
+        </script>
+
+        <table class="layui-hide" id="currentTableId" lay-filter="currentTableFilter"></table>
+
+        <script type="text/html" id="currentTableBar">
+            <a class="layui-btn layui-btn-normal layui-btn-xs data-count-edit" lay-event="edit">编辑</a>
+            <a class="layui-btn layui-btn-xs layui-btn-danger data-count-delete" lay-event="delete">删除</a>
+        </script>
+
+    </div>
+</div>
+<script src="../static/lib/layui-v2.5.5/layui.js" charset="utf-8"></script>
+<script>
+    layui.use(['form', 'table'], function () {
+        var $ = layui.jquery,
+            form = layui.form,
+            table = layui.table;
+        /*  加载表格实例*/
+        table.render({
+            elem: '#currentTableId',
+            url: 'http://localhost:8003/Third/query',
+            toolbar: '#toolbarDemo',
+            method: "post",
+            defaultToolbar: ['filter', 'exports', 'print'],
+            cols: [
+                [
+                    {type: "checkbox", width: 50},
+                    {field: 'id', width: 80, title: 'ID', sort: true},
+                    {field: 'f', width: 100, title: 'f'},
+                    {field: 'eoc', width: 100, title: 'eoc'},
+                    {field: 'd', width: 100, title: 'd'},
+                    {field: 'a', width: 100, title: 'a'},
+                    {field: 'mel', width: 100, title: 'Mel'},
+                    {field: 'sl', width: 100, title: 'SL'},
+                    {field: 'remark', title: '备注', minWidth: 500},
+                    {field: 'date', width: 180, title: '时间'}
+                ]
+            ],
+            limits: [15, 20, 25, 50, 100],
+            limit: 15,
+            page: true,
+            skin: 'line'
+        });
+
+        // 监听搜索操作
+        form.on('submit(data-search-btn)', function (data) {
+            var result = JSON.stringify(data.field);
+            //执行搜索重载
+            table.reload('currentTableId', {
+                page: {
+                    curr: 1
+                }
+                , where: {
+                    //
+                    "f": data.field.f,
+                }
+            }, 'data');
+
+            return false;
+        });
+
+        /**
+         * toolbar监听事件
+         */
+        table.on('toolbar(currentTableFilter)', function (obj) {
+            if (obj.event === 'add') {  // 监听添加操作
+                var index = layer.open({
+                    title: '添加数据',
+                    type: 2,
+                    shade: 0.2,
+                    maxmin: true,
+                    shadeClose: true,
+                    area: ['100%', '100%'],
+                    content: 'create',
+                    end: function () {
+                        table.reload('currentTableId');
+                    }
+                });
+                $(window).on("resize", function () {
+
+                    layer.full(index);
+                });
+            } else if (obj.event === 'delete') {  // 监听删除操作
+                var checkStatus = table.checkStatus('currentTableId'),
+                    data = checkStatus.data;
+                var arr = [];
+                for (index in data) {
+                    arr.push(data[index].id);
+                }
+                if (arr.length == 0) {
+                    layer.msg("请最少选择一条数据");
+                    return;
+                }
+                layer.confirm("确定删除数据吗", {
+                    btn: ['确定', '取消']
+                }, function () {
+                    $.ajax({
+                        url: "http://localhost:8003/Third/delete",
+                        type: "POST",
+                        dataType: 'json',
+                        data: 'ids=' + arr.join(","),
+                        success: function (data) {
+                            layer.msg(data.msg, {time: 500},
+                                function () {
+                                    table.reload('currentTableId');
+                                });
+                        }
+                    });
+                }, function () {
+                    layer.close(index);
+                });
+            }
+
+            else if (obj.event === 'edit') {  // 监听修改操作
+                var checkStatus = table.checkStatus('currentTableId')
+                    , data = checkStatus.data;
+                var arr = [];
+                for (index in data) {
+                    arr.push(data[index].id);
+                }
+                if (arr.length != 1) {
+                    layer.msg("请选择一行数据");
+                    return;
+                }
+
+                var index = layer.open({
+                    title: '修改数据',
+                    type: 2,
+                    shade: 0.2,
+                    maxmin: true,
+                    shadeClose: true,
+                    area: ['100%', '100%'],
+                    content: 'update?id=' + arr[0],
+                    end: function () {
+                        table.reload('currentTableId');
+                    }
+                });
+                $(window).on("resize", function () {
+                    layer.full(index);
+                });
+            }
+        });
+
+    });
+
+
+</script>
+
+</body>
+</html>

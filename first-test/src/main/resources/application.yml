@@ -1,0 +1,17 @@
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://eurake7001.com:7001/eureka/,http://eurake7002.com:7002/eureka/
+
+spring:
+  application:
+    name: first-test
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/testsystem?useUnicode=true&characterEncoding=utf-8&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai&useSSL=false
+    username: root
+    password: 123456
+
+server:
+  port: 8002
+

@@ -1,0 +1,24 @@
+server:
+  port: 9001
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://eurake7001.com:7001/eureka/,http://eurake7002.com:7002/eureka/
+spring:
+  application:
+    name: zuul-server
+
+zuul:
+  sensitive-headers: Cookie,Set-Cookie
+  routes:
+    front-end-system: "/front-end-system/**"
+    first-test: "/first-test/**"
+    second-test: "/second-test/**"
+    third-test: "/third-test/**"
+    security-auth-server: "/security-auth-server/**"
+
+    visit-static:
+      path: /static/**
+      url: http://localhost:8001/static/
+
+

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/eurake-server001" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/eurake-server002" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/first-test" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/front-end-system" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/login-server" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/second-test" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/security-auth-server" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/third-test" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/utils-server" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/zuul-server" charset="UTF-8" />
+  </component>
+</project>
